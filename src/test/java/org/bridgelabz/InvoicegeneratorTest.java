@@ -3,6 +3,8 @@ package org.bridgelabz;
 import junit.framework.Assert;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 public class InvoicegeneratorTest {
 
     Invoicegenerator fareCalculator = new Invoicegenerator();
@@ -22,12 +24,12 @@ public class InvoicegeneratorTest {
 
         // Test case 1: Multiple rides with normal fare
         Ride[] rides1 = {
-                new Ride(5, 20),   
+                new Ride(5, 20),
                 new Ride(3, 10),
                 new Ride(0.5, 2)
         };
         double expectedFare1 = 117;
-       Assert.assertEquals(expectedFare1, fareCalculator.calculateTotalFare(rides1));
+       Assert.assertEquals(expectedFare1, fareCalculator.calculateTotalFare(List.of(rides1)));
     }
 
     // TC 3 :
@@ -45,4 +47,23 @@ public class InvoicegeneratorTest {
         Assert.assertEquals(117 / 3.0, invoice1.getAverageFarePerRide(), 0.001);
     }
 
+    //TC 4 :
+    @Test
+    public void testListGenerateInvoice() {
+        RideRepository rideRepository = new RideRepository();
+        InvoiceService invoiceService = new InvoiceService(rideRepository, fareCalculator);
+
+        // Adding rides for user "user1"
+        rideRepository.addRides("user1", List.of(
+                new Ride(5, 20),   // Rs. 70
+                new Ride(3, 10),   // Rs. 40
+                new Ride(0.5, 2)   // Rs. 5 (minimum fare)
+        ));
+
+        // Generating the invoice for "user1"
+        Invoice invoice = invoiceService.generateInvoice("user1");
+        Assert.assertEquals(3, invoice.getTotalRides());
+        Assert.assertEquals(117, invoice.getTotalFare(), 0.001);
+        Assert.assertEquals(117 / 3.0, invoice.getAverageFarePerRide(), 0.001);
+    }
 }
