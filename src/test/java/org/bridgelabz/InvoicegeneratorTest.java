@@ -29,4 +29,20 @@ public class InvoicegeneratorTest {
         double expectedFare1 = 117;
        Assert.assertEquals(expectedFare1, fareCalculator.calculateTotalFare(rides1));
     }
+
+    // TC 3 :
+    @Test
+    public void testGenerateInvoice() {
+
+        Ride[] rides1 = {
+                new Ride(5, 20),   // Rs. 70
+                new Ride(3, 10),   // Rs. 40
+                new Ride(0.5, 2)   // Rs. 5 (minimum fare)
+        };
+        Invoice invoice1 = fareCalculator.generateInvoice(rides1);
+        Assert.assertEquals(3, invoice1.getTotalRides());
+       Assert.assertEquals(117, invoice1.getTotalFare(), 0.001);
+        Assert.assertEquals(117 / 3.0, invoice1.getAverageFarePerRide(), 0.001);
+    }
+
 }
